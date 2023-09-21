@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+
+
+#verwijderen not functiol
+
+
+
 
 # Azure resource group where VMs are located
 resource_group="cloud.infra.tjorven.buyse"
