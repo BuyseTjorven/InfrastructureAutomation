@@ -22,6 +22,19 @@
 #read switchprogramming.csv file
 
 import csv
+from netmiko import ConnectHandler
+
+
+
+def portcalculate (ports):
+    ports = ports.split(',')
+    for port in ports:
+        if '-' in port:
+            print(f"int range gi0/{port}")
+            return f"int range gi0/{port}"
+        else:
+            print(f"int gi0/{port}")
+            return f"int gi0/{port}"
 
 # Define the CSV file path
 csv_file = 'Python\switch programming\switchprogramming.csv'  # Replace 'your_file.csv' with the actual file path
@@ -45,5 +58,40 @@ with open(csv_file, mode='r') as file:
 
 # Print the data as a dictionary
 for vlan, details in data_dict.items():
-    print(f"VLAN: {vlan}, Name: {details['name']}, Subnet: {details['subnet']}, Netmask: {details['netmask']}, Ports: {details['ports']}")
+    #print(f"VLAN: {vlan}, Name: {details['name']}, Subnet: {details['subnet']}, Netmask: {details['netmask']}, Ports: {details['ports']}")
+    print("command 1")
+    command = []
+    command.append(f"vlan {vlan}")
+    command.append(f"name {details['name']}")
+    command.append(f"interface {vlan}")
+    command.append(f"description {details['name']}")
+    #command.append(f"ip address {details['subnet']} {details['netmask']}")
+    #hierboven voor layer 3
+    command.append("no ip address")
+    command.append("no shut")
+    print(command)
+    print()
+    print("command 2")
+    command = []
+    command.append(f"int ra {portcalculate(details['ports'])}")
+    command.append("switchport mode access")
+    command.append("spanning-tree portfast")
+    command.append(f"switchport access vlan {vlan}")
+    print(command)
+    print()
+cisco_881 = {
+    'device_type': 'cisco_ios',
+    'host':   '192.168.1.5',
+    'username': 'tjorven',
+    'password': 'tjorven',
+}
+net_connect = ConnectHandler(**cisco_881)
+output = net_connect.send_command('show ip int brief')
+print(output)
+
+
+
+
+
+
 
