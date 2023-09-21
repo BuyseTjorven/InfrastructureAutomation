@@ -86,7 +86,7 @@ cisco_881 = {
     'password': 'tjorven',
 }
 net_connect = ConnectHandler(**cisco_881)
-output = net_connect.send_command('show ip int brief')
+output = net_connect.send_command(command)
 print(output)
 
 
