@@ -1,0 +1,40 @@
+
+Switch>
+Switch>terminal width 511
+Switch>terminal length 0
+Switch>
+Switch>
+Switch>enable
+Password: 
+Switch#
+Switch#
+Switch#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#
+Switch(config)#vlan 10
+Switch(config-vlan)#name VLAN10
+Switch(config-vlan)#interface vlan 10
+Switch(config-if)#description VLAN10
+Switch(config-if)#no ip address
+Switch(config-if)#no shut
+Switch(config-if)#interface range fa0/2-8
+Switch(config-if-range)#switchport mode access
+Switch(config-if-range)#spanning-tree portfast
+%Warning: portfast should only be enabled on ports connected to a single
+ host. Connecting hubs, concentrators, switches, bridges, etc... to this
+ interface  when portfast is enabled, can cause temporary bridging loops.
+ Use with CAUTION
+
+%Portfast will be configured in 7 interfaces due to the range command 
+ but will only have effect when the interfaces are in a non-trunking mode.
+Switch(config-if-range)#switchport access vlan 10
+Switch(config-if-range)#
+Switch(config-if-range)#end
+Switch#
+Switch#
+Switch#
+Switch#write mem
+Building configuration...
+[OK]
+Switch#
+Switch#exit

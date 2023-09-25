@@ -84,12 +84,30 @@ cisco_881 = {
     'host':   '192.168.1.5',
     'username': 'tjorven',
     'password': 'tjorven',
+    'secret': 'tjorven',
+    'session_log': 'session.log',  # Optional, for debugging
+    'fast_cli': False,  # Optional, might help with some devices
+    'timeout': 120,  # Increase the timeout if necessary
+    'global_delay_factor': 2,  # Optional, adjust as needed
+    #'device_prompt': 'Switch>',  # Specify your device's prompt
 }
+
 print('command final')
 print(command)
 net_connect = ConnectHandler(**cisco_881)
-output = net_connect.send_command(command[0])
+net_connect.enable()
+commands = ["vlan 10", "name VLAN10", "interface vlan 10", "description VLAN10", "no ip address", "no shut", "interface range fa0/2-8", "switchport mode access", "spanning-tree portfast", "switchport access vlan 10"]
+
+# Send configuration commands
+output = net_connect.send_config_set(commands)
+output += net_connect.save_config()
+
+# Close the connection
+net_connect.disconnect()
+
+print()
 print(output)
+print()
 
 
 
