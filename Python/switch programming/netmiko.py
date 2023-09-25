@@ -30,11 +30,11 @@ def portcalculate (ports):
     ports = ports.split(',')
     for port in ports:
         if '-' in port:
-            print(f"int range gi0/{port}")
-            return f"int range gi0/{port}"
+            print(f"int range fa0/{port}")
+            return f"int range fa0/{port}"
         else:
-            print(f"int gi0/{port}")
-            return f"int gi0/{port}"
+            print(f"int fa0/{port}")
+            return f"int fa0/{port}"
 
 # Define the CSV file path
 csv_file = 'Python\switch programming\switchprogramming.csv'  # Replace 'your_file.csv' with the actual file path
@@ -73,7 +73,7 @@ for vlan, details in data_dict.items():
     print()
     print("command 2")
     command = []
-    command.append(f"int ra {portcalculate(details['ports'])}")
+    command.append(f"{portcalculate(details['ports'])}")
     command.append("switchport mode access")
     command.append("spanning-tree portfast")
     command.append(f"switchport access vlan {vlan}")
@@ -85,8 +85,10 @@ cisco_881 = {
     'username': 'tjorven',
     'password': 'tjorven',
 }
+print('command final')
+print(command)
 net_connect = ConnectHandler(**cisco_881)
-output = net_connect.send_command(command)
+output = net_connect.send_command(command[0])
 print(output)
 
 
