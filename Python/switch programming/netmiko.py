@@ -24,7 +24,7 @@
 
 #voor resetten :)
 #del vlan.dat (delete vlan database)
-#dele startup-config (delete startup config)
+#erase startup-config (delete startup config)
 #reload (reload switch)
 
 import csv
