@@ -21,6 +21,12 @@
 
 #read switchprogramming.csv file
 
+
+#voor resetten :)
+#del vlan.dat (delete vlan database)
+#dele startup-config (delete startup config)
+#reload (reload switch)
+
 import csv
 from netmiko import ConnectHandler
 
@@ -96,10 +102,10 @@ print('command final')
 print(command)
 net_connect = ConnectHandler(**cisco_881)
 net_connect.enable()
-commands = ["vlan 10", "name VLAN10", "interface vlan 10", "description VLAN10", "no ip address", "no shut", "interface range fa0/2-8", "switchport mode access", "spanning-tree portfast", "switchport access vlan 10"]
+#commands = ["vlan 10", "name VLAN10", "interface vlan 10", "description VLAN10", "no ip address", "no shut", "interface range fa0/2-8", "switchport mode access", "spanning-tree portfast", "switchport access vlan 10"]
 
 # Send configuration commands
-output = net_connect.send_config_set(commands)
+output = net_connect.send_config_set(command)
 output += net_connect.save_config()
 
 # Close the connection
