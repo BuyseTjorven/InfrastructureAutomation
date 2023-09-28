@@ -1,0 +1,8 @@
+interface gi0/0
+ description WAN
+ ip address dhcp 
+
+interface gi0/1
+ description LAN
+ ip address 192.168.1.1 255.255.255.0
+
