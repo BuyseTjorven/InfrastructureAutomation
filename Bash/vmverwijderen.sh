@@ -2,7 +2,7 @@
 #
 
 
-#verwijderen not functiol
+#verwijderen werkt maar extra services niet :/
 
 
 

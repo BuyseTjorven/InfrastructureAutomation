@@ -1,5 +1,8 @@
 import csv
 
+#dingen die dhcp zijn moet je een exlude met range. zie cisco basic router commands puntje 7.
+#ook met de subinterfaces doen
+
 # Define the CSV file path
 csv_file = r'Python\router programming\routerprogramming.csv'  # Replace 'your_file.csv' with the actual file path
 
@@ -32,7 +35,21 @@ with open('configuration.txt', 'w') as file:
         file.write('\n ip address {} {}'.format(data_dict[network]['ipaddress'], data_dict[network]['netmask']))
         if data_dict[network]['defaultgateway'] != '':
             file.write('\n ip default-gateway {}'.format(data_dict[network]['defaultgateway']))
-        file.write('\n\n')
+
+        # Add additional Cisco router commands, such as:
+        # - Setting the VLAN
+        if data_dict[network]['vlan'] != '':
+            file.write('\n switchport mode access')
+            file.write('\n switchport access vlan {}'.format(data_dict[network]['vlan']))
+
+        # - Enabling the interface
+        file.write('\n no shutdown')
+
+        # - Saving the configuration
+        file.write('\n end')
+
+        # Add a blank line between each configuration block
+        file.write('\n')
 
 # Print a message to the console
 print('The configuration has been written to configuration.txt')
