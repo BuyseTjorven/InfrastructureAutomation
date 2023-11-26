@@ -1,54 +1,74 @@
 #!/bin/bash
 
-# Check if the required number of arguments is provided
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <number>"
-    exit 1
-fi
+# Azure Subscription ID
 
-# Read the desired number of VMs from the argument
-aantal_vm=$1
+# Resource Group
+resource_group="labo2_storage"
 
-# Azure resource group and location
-resource_group="cloud.infra.tjorven.buyse"
-locatie="westeurope"
+# Location (e.g., eastus, westus, etc.)
+location="westeurope"
 
-# Azure VM settings
-vm_size="Standard_B1s" # Kies de gewenste VM-grootte
-admin_username="tjorven"
+# Virtual Machine Name
+vm_name="your_vm_name"
 
-# Timestamp voor VM-naam
-timestamp=$(date +%Y%m%d%H%M%S)
+# VM Username
+vm_username="tjorven"
 
-# Genereer een nieuw SSH-sleutelpaar
-ssh_key_path=~/.ssh/azure_vm_key
-ssh_key_pub_path="$ssh_key_path.pub" # Public key file path
-ssh-keygen -t rsa -b 2048 -f "$ssh_key_path" -N ""
+# VM Password (replace with your desired password)
+vm_password="Tjorvenbuyse%"
 
-# Toon het nieuw gegenereerde SSH-publieke sleutel in de terminal
-echo "SSH public key:"
-cat "$ssh_key_pub_path"
+# VM Size (e.g., Standard_DS1_v2, Standard_D2s_v3, etc.)
+vm_size="Standard_DS1_v2"
 
-# Maak een Azure resourcegroep
-az group create --name $resource_group --location $locatie
+# Ubuntu OS Image
+os_image="Canonical:UbuntuServer:18.04-LTS:latest"
 
-# Loop om het gewenste aantal VM's te maken
-for ((i = 1; i <= $aantal_vm; i++)); do
-    # Definieer de VM-naam
-    vm_naam="ubuntu-vm-$timestamp-$i"
+# Network Security Group Name
+nsg_name="your_nsg_name"
 
-    # Maak een Ubuntu 22.04 VM met het nieuw gegenereerde SSH-sleutelpaar
-    az vm create \
-        --resource-group $resource_group \
-        --name $vm_naam \
-        --image UbuntuLTS \
-        --admin-username $admin_username \
-        --ssh-key-values "$ssh_key_pub_path" \
-        --size $vm_size
+# Public IP Address Name
+public_ip_name="your_public_ip_name"
 
-    # Voeg een tag toe aan de VM-resources
-    az resource tag --tags "student=BuyseTjörven" --ids $(az vm show --resource-group $resource_group --name $vm_naam --query 'id' --output tsv)
-done
+# Virtual Network Name
+vnet_name="your_vnet_name"
 
-# Toon hoe lang het duurde om de VM's te maken
-echo "VM's zijn gemaakt in resourcegroep $resource_group."
+# Subnet Name
+subnet_name="your_subnet_name"
+
+# Create a resource group
+#az group create --name $resource_group --location $location
+
+# Create a virtual network
+az network vnet create --resource-group $resource_group --name $vnet_name --subnet-name $subnet_name
+
+# Create a public IP address
+az network public-ip create --resource-group $resource_group --name $public_ip_name --allocation-method Dynamic
+
+# Create a network security group
+#firewall rules nog toevoegen
+az network nsg create --resource-group $resource_group --name $nsg_name
+
+# Create a virtual network interface card
+#hier of bij vm firewall rules nog toevoegen denk ik?
+az network nic create \
+  --resource-group $resource_group \
+  --name "${vm_name}-nic" \
+  --vnet-name $vnet_name \
+  --subnet $subnet_name \
+  --public-ip-address $public_ip_name \
+  --network-security-group $nsg_name
+
+# Create a virtual machine
+#hier of bij virtual network rules nog toevoegen denk ik?
+az vm create \
+  --resource-group $resource_group \
+  --name $vm_name \
+  --location $location \
+  --size $vm_size \
+  --image $os_image \
+  --admin-username $vm_username \
+  --admin-password $vm_password \
+  --nics "${vm_name}-nic"
+
+# Output information about the VM
+az vm show --resource-group $resource_group --name $vm_name --show-details --query "publicIps" --output tsv
